@@ -1,0 +1,1017 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="codex-wrapper">
+
+    <!-- BACK -->
+     <div class="likovi-back" onclick="goBack()">← NAZAD</div>
+
+    <!-- LEFT MENU -->
+    <div class="codex-menu">
+        <h1 class="codex-title">NOVOSTI</h1>
+
+        <div class="codex-menu-scroll">
+            <ul class="codex-list">
+            <li class="codex-item active" data-target="vijesti">VIJESTI</li>
+            <li class="codex-item" data-target="capcom">CAPCOM INFO</li>
+        </ul>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="codex-panel">
+
+        <div class="codex-scroll-hint">↓</div>
+
+        <!-- VIJESTI -->
+        <section class="codex-section active" id="vijesti">
+            <h2>VIJESTI</h2>
+
+            <!-- SEARCH BAR -->
+            <div class="news-search-container">
+                <form method="GET" action="{{ url_for('novosti') }}" class="news-search-form">
+                    <input 
+                        type="text" 
+                        name="search_query" 
+                        placeholder="🔍 Pretraži vijesti..." 
+                        value="{{ search_query }}"
+                        class="news-search-input"
+                    >
+                    <button type="submit" class="news-search-btn">Traži</button>
+                    {% if search_query %}
+                        <a href="{{ url_for('novosti') }}" class="news-search-clear">✕ Očisti</a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <div class="news-grid">
+                {% if news.items %}
+                    {% for item in news.items %}
+                    <div class="news-card">
+                        {% if item.thumbnail %}
+                            <div class="news-thumbnail" style="background: url('{{ item.thumbnail }}') center/cover;"></div>
+                        {% else %}
+                            <div class="news-thumbnail" style="background: #333;"></div>
+                        {% endif %}
+                        <div class="news-card-body">
+                            <h3 class="news-title">{{ item.title }}</h3>
+                            <p class="news-excerpt" id="excerpt-{{ item.id }}">Učitavanje...</p>
+                            <button class="news-read-btn" onclick="openNewsModal('{{ item.id }}' )">PROČITAJ VIŠE</button>
+                        </div>
+                        <!-- Store raw content in hidden element for JavaScript -->
+                        <div id="news-raw-content-{{ item.id }}" style="display:none;">{{ item.content | safe }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <p style="color: #999; text-align: center; grid-column: 1 / -1;">
+                    {% if search_query %}
+                        Nema rezultata za "{{ search_query }}"
+                    {% else %}
+                        Nema dostupnih vijesti
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- PAGINACIJA ZA VIJESTI -->
+            {% if news.pages > 1 %}
+            <div class="news-pagination">
+                <!-- Mobile: Samo Nazad i Naprijed -->
+                <div class="pagination-mobile">
+                    {% if news.has_prev %}
+                        <a href="{{ url_for('novosti', page=news.prev_num) }}" class="page-link">‹ NAZAD</a>
+                    {% else %}
+                        <span class="page-link disabled">‹ NAZAD</span>
+                    {% endif %}
+                    
+                    <span class="page-info">{{ news.page }} / {{ news.pages }}</span>
+                    
+                    {% if news.has_next %}
+                        <a href="{{ url_for('novosti', page=news.next_num) }}" class="page-link">NAPRIJED ›</a>
+                    {% else %}
+                        <span class="page-link disabled">NAPRIJED ›</span>
+                    {% endif %}
+                </div>
+
+                <!-- Desktop: Smart paginacija sa točkicama -->
+                <div class="pagination-desktop">
+                    {% if news.has_prev %}
+                        <a href="{{ url_for('novosti', page=1) }}" class="page-link first-page" title="Prva stranica">«</a>
+                        <a href="{{ url_for('novosti', page=news.prev_num) }}" class="page-link prev-page" title="Prethodna">‹</a>
+                    {% endif %}
+
+                    {% set pages_to_show = [] %}
+                    {% set current = news.page %}
+                    {% set max_pages = news.pages %}
+                    {% set show_count = 5 %}
+                    {% set half = show_count // 2 %}
+                    
+                    {% if max_pages <= show_count %}
+                        {% set start_page = 1 %}
+                        {% set end_page = max_pages %}
+                    {% else %}
+                        {% if current <= half + 1 %}
+                            {% set start_page = 1 %}
+                            {% set end_page = show_count %}
+                        {% elif current >= max_pages - half %}
+                            {% set start_page = max_pages - show_count + 1 %}
+                            {% set end_page = max_pages %}
+                        {% else %}
+                            {% set start_page = current - half %}
+                            {% set end_page = current + half %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if start_page > 1 %}
+                        <span class="page-dots">...</span>
+                    {% endif %}
+
+                    {% for page_num in range(start_page, end_page + 1) %}
+                        {% if page_num == current %}
+                            <span class="page-link active">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('novosti', page=page_num) }}" class="page-link">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if end_page < max_pages %}
+                        <span class="page-dots">...</span>
+                    {% endif %}
+
+                    {% if news.has_next %}
+                        <a href="{{ url_for('novosti', page=news.next_num) }}" class="page-link next-page" title="Sljedeća">›</a>
+                        <a href="{{ url_for('novosti', page=news.pages) }}" class="page-link last-page" title="Zadnja stranica">»</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+        </section>
+
+        <!-- CAPCOM INFO -->
+        <section class="codex-section" id="capcom">
+            <h2>CAPCOM INFO</h2>
+
+            <p>
+                Informacije direktno od Capcom-a o razvojnom procesu,
+                inovacijama i viziji za Resident Evil seriju.
+            </p>
+
+            <p>
+                <a href="https://www.residentevil.com/requiem/en-us/" target="_blank" style="color: #4a9eff;">Saznajte</a> sve o timovima koji kreiraju ove igre,
+                tehnologiji koja je korištena i budućim planovima.
+            </p>
+
+        </section>
+
+    </div>
+
+</div>
+
+<!-- NEWS MODAL / POPUP -->
+<div id="newsModal" class="news-modal" style="display: none;">
+    <div class="news-modal-content">
+        <span class="news-modal-close" onclick="closeNewsModal()">&times;</span>
+        
+        <div class="news-modal-image" id="modalImage"></div>
+        
+        <div class="news-modal-body">
+            <h2 id="modalTitle" class="news-modal-title"></h2>
+            <p id="modalContent" class="news-modal-text"></p>
+            
+            <div id="modalVideo" class="news-modal-video" style="display: none;">
+                <video controls width="100%" style="border-radius: 4px; margin-top: 20px;">
+                    <source id="videoSource" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- IMAGE LIGHTBOX -->
+<div id="imageLightbox" class="image-lightbox" style="display: none;">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <span class="lightbox-prev" onclick="prevImage()">❮</span>
+    <img id="lightboxImage" src="" alt="Gallery image" class="lightbox-img">
+    <span class="lightbox-next" onclick="nextImage()">❯</span>
+    <div class="lightbox-counter" id="lightboxCounter">1 / 1</div>
+</div>
+
+<script>
+// Dinamički dohvati vijesti iz servera
+let allNews = {};
+
+// Funkcija za stripanje HTML tagova
+function stripHtml(html) {
+    const temp = document.createElement('DIV');
+    temp.innerHTML = html;
+    return temp.textContent || temp.innerText || '';
+}
+
+// Učitaj vijesti iz HTML data atributa
+document.addEventListener('DOMContentLoaded', function() {
+    const newsCards = document.querySelectorAll('.news-card');
+    console.log('Total news cards:', newsCards.length);
+    
+    newsCards.forEach((card, index) => {
+        // Strip HTML iz preview teksta
+        const excerptEl = card.querySelector('.news-excerpt');
+        if (excerptEl) {
+            console.log('Initial excerpt content:', excerptEl.innerHTML);
+            console.log('Initial excerpt textContent:', excerptEl.textContent);
+            // Get raw HTML content from hidden div element
+            const rawContentEl = card.querySelector('[id^="news-raw-content-"]');
+            const rawContent = rawContentEl ? rawContentEl.innerHTML : '';
+            
+            if (rawContent && rawContent.trim()) {
+                console.log('RAW CONTENT BEFORE:', rawContent.substring(0, 200));
+                
+                // Direktno koristi regex da očisti HTML tagove i entitete
+                // Ukloni sve HTML tagove
+                let plainText = rawContent.replace(/<[^>]*>/g, '');
+                console.log('AFTER REMOVE TAGS:', plainText.substring(0, 200));
+                
+                // Dekoduj HTML entitete
+                plainText = plainText
+                    .replace(/&nbsp;/g, ' ')
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;/g, "'")
+                    .replace(/&apos;/g, "'");
+                
+                console.log('AFTER DECODE ENTITIES:', plainText.substring(0, 200));
+                
+                plainText = plainText.trim().replace(/\s+/g, ' ');
+                
+                // Truncate to 150 characters and add ellipsis
+                if (plainText.length > 150) {
+                    plainText = plainText.substring(0, 150).trim() + '...';
+                } else if (plainText.length > 0) {
+                    plainText = plainText + '...';
+                }
+                
+                console.log('FINAL PLAIN TEXT:', plainText);
+                
+                // Display clean text - KORISTI textContent da se prikaže kao tekst, ne HTML
+                excerptEl.textContent = plainText;
+            } else {
+                excerptEl.textContent = 'Sadržaj nije dostupan...';
+            }
+        }
+        
+        const title = card.querySelector('.news-title').textContent;
+        const excerpt = card.querySelector('.news-excerpt').textContent;
+        const thumbnail = card.querySelector('.news-thumbnail').style.backgroundImage.slice(5, -2);
+        
+        allNews[index + 1] = {
+            title: title,
+            image: thumbnail,
+            content: excerpt,
+            video: null
+        };
+    });
+});
+
+function openNewsModal(newsId) {
+    // Dohvati podatke iz baze preko AJAX-a
+    fetch(`/api/news/${newsId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('News data:', data);  // Debug
+            
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalImage').style.backgroundImage = `url('${data.thumbnail || ''}')`;
+            
+            // Set content - PRIKAŽI HTML FORMATIRANJE IZ QUILL EDITORA
+            const modalContent = document.getElementById('modalContent');
+            if (data.content && data.content.trim()) {
+                // Prikaži HTML sadržaj sa formatiranjem
+                modalContent.innerHTML = data.content;
+                // Primijeni stilove za HTML elemente
+                modalContent.style.wordWrap = 'break-word';
+                modalContent.style.lineHeight = '1.8';
+            } else {
+                modalContent.innerHTML = '<p style="color: #999;">Sadržaj nije dostupan</p>';
+            }
+            
+            const videoDiv = document.getElementById('modalVideo');
+            if (data.video_url) {
+                if (data.video_url.includes('youtube.com') || data.video_url.includes('youtu.be')) {
+                    // YouTube video - extract video ID properly
+                    let videoId = '';
+                    if (data.video_url.includes('v=')) {
+                        videoId = data.video_url.split('v=')[1].split('&')[0];
+                    } else if (data.video_url.includes('youtu.be/')) {
+                        videoId = data.video_url.split('youtu.be/')[1].split('?')[0];
+                    }
+                    
+                    if (videoId) {
+                        document.getElementById('videoSource').src = '';
+                        videoDiv.innerHTML = `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 4px; margin-top: 20px;"></iframe>`;
+                        videoDiv.style.display = 'block';
+                    }
+                } else {
+                    // Lokalni video
+                    document.getElementById('videoSource').src = data.video_url;
+                    videoDiv.style.display = 'block';
+                }
+            } else {
+                videoDiv.style.display = 'none';
+            }
+            
+            // Dodaj X/Twitter iframe ako postoji
+            const modalBody = document.querySelector('.news-modal-body');
+            const existingTwitter = modalBody.querySelector('.news-twitter-embed');
+            if (existingTwitter) existingTwitter.remove();
+            
+            if (data.twitter_iframe) {
+                const twitterDiv = document.createElement('div');
+                twitterDiv.className = 'news-twitter-embed';
+                const blockquote = document.createElement('blockquote');
+                blockquote.className = 'twitter-tweet';
+                const link = document.createElement('a');
+                link.href = data.twitter_iframe;
+                blockquote.appendChild(link);
+                twitterDiv.appendChild(blockquote);
+                modalBody.appendChild(twitterDiv);
+                // Reprocess Twitter embeds
+                if (window.twttr) {
+                    window.twttr.widgets.load();
+                }
+            }
+            
+            // Dodaj galeriju ako postoji
+            const existingGallery = modalBody.querySelector('.news-gallery');
+            if (existingGallery) existingGallery.remove();
+            
+            if (data.gallery && Array.isArray(data.gallery) && data.gallery.length > 0) {
+                const galleryDiv = document.createElement('div');
+                galleryDiv.className = 'news-gallery';
+                galleryDiv.innerHTML = '<h4 style="color: #00d4ff; margin-top: 20px; margin-bottom: 10px;">📸 Galerija (klikni da otovriš)</h4>';
+                
+                const imgsContainer = document.createElement('div');
+                imgsContainer.className = 'gallery-images';
+                
+                data.gallery.forEach((imgPath, index) => {
+                    const img = document.createElement('img');
+                    img.src = imgPath;
+                    img.alt = 'Gallery image';
+                    img.className = 'gallery-img';
+                    img.style.cursor = 'pointer';
+                    
+                    // Click to open lightbox
+                    img.addEventListener('click', function() {
+                        openLightbox(data.gallery, index);
+                    });
+                    
+                    imgsContainer.appendChild(img);
+                });
+                
+                galleryDiv.appendChild(imgsContainer);
+                modalBody.appendChild(galleryDiv);
+            }
+            
+            
+            document.getElementById('newsModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        })
+        .catch(err => console.error('Greška pri učitavanju vijesti:', err));
+}
+
+function closeNewsModal() {
+    document.getElementById('newsModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+document.querySelectorAll('.codex-item').forEach(item => {
+    item.addEventListener('click', () => {
+        document.querySelectorAll('.codex-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.codex-section').forEach(el => el.classList.remove('active'));
+        
+        item.classList.add('active');
+        const target = item.getAttribute('data-target');
+        document.getElementById(target).classList.add('active');
+    });
+});
+
+function goBack() {
+    window.history.back();
+}
+
+// Zatvori modal klikom van njega
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('newsModal');
+    if (e.target === modal) {
+        closeNewsModal();
+    }
+});
+
+// LIGHTBOX ZA GALERIJU SLIKA
+let currentLightboxIndex = 0;
+let currentGalleryImages = [];
+
+function openLightbox(gallery, index) {
+    currentGalleryImages = gallery;
+    currentLightboxIndex = index;
+    showLightboxImage();
+    document.getElementById('imageLightbox').style.display = 'flex';
+}
+
+function closeLightbox() {
+    document.getElementById('imageLightbox').style.display = 'none';
+}
+
+function showLightboxImage() {
+    const img = document.getElementById('lightboxImage');
+    const counter = document.getElementById('lightboxCounter');
+    img.src = currentGalleryImages[currentLightboxIndex];
+    counter.textContent = (currentLightboxIndex + 1) + ' / ' + currentGalleryImages.length;
+}
+
+function nextImage() {
+    currentLightboxIndex = (currentLightboxIndex + 1) % currentGalleryImages.length;
+    showLightboxImage();
+}
+
+function prevImage() {
+    currentLightboxIndex = (currentLightboxIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+    showLightboxImage();
+}
+
+// Tastatura navigacija za lightbox
+document.addEventListener('keydown', (e) => {
+    const lightbox = document.getElementById('imageLightbox');
+    if (lightbox.style.display === 'flex') {
+        if (e.key === 'ArrowRight') nextImage();
+        if (e.key === 'ArrowLeft') prevImage();
+        if (e.key === 'Escape') closeLightbox();
+    }
+});
+</script>
+
+<style>
+/* ========================
+   NEWS SEARCH
+======================== */
+.news-search-container {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 4px;
+}
+
+.news-search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.news-search-input {
+    flex: 1;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: #fff;
+    font-size: 14px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.news-search-input::placeholder {
+    color: #666;
+}
+
+.news-search-input:focus {
+    outline: none;
+    background: rgba(0, 0, 0, 0.6);
+    border-color: #00d4ff;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+.news-search-btn {
+    padding: 10px 20px;
+    background: #00d4ff;
+    color: #000;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.news-search-btn:hover {
+    background: #00b8d4;
+    transform: translateY(-2px);
+}
+
+.news-search-clear {
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.news-search-clear:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #00d4ff;
+}
+
+@media (max-width: 768px) {
+    .news-search-form {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .news-search-input {
+        width: 100%;
+    }
+    
+    .news-search-btn,
+    .news-search-clear {
+        width: 100%;
+    }
+}
+
+/* ========================
+   NEWS GRID
+======================== */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.news-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.news-thumbnail {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-card-body {
+    padding: 15px;
+}
+
+.news-title {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.news-excerpt {
+    color: #bbb;
+    font-size: 13px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.news-read-btn {
+    width: 100%;
+    padding: 8px;
+    background: rgba(74, 158, 255, 0.8);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.news-read-btn:hover {
+    background: rgba(74, 158, 255, 1);
+}
+
+/* ========================
+   NEWS MODAL / POPUP
+======================== */
+.news-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.news-modal-content {
+    background: linear-gradient(135deg, rgba(20, 30, 48, 0.95), rgba(10, 14, 39, 0.95));
+    border: 2px solid rgba(74, 158, 255, 0.5);
+    border-radius: 8px;
+    width: 700px;
+    max-height: 80vh;
+    min-height: 500px;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+}
+
+.news-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #999;
+    font-size: 32px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 10000;
+}
+
+.news-modal-close:hover {
+    color: #fff;
+}
+
+.news-modal-image {
+    width: 100%;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.news-modal-body {
+    padding: 30px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.news-modal-title {
+    color: #4a9eff;
+    font-size: 20px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    max-height: 80px;
+    overflow: hidden;
+}
+
+.news-modal-text {
+    color: #ddd;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.news-modal-video {
+    margin-top: 20px;
+}
+
+/* ========================
+   NEWS GALLERY
+======================== */
+.news-gallery {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.gallery-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-img:hover {
+    transform: scale(1.05);
+    border-color: rgba(74, 158, 255, 0.5);
+}
+
+/* ========================
+   TWITTER EMBED
+======================== */
+.news-twitter-embed {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-twitter-embed blockquote {
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #00d4ff;
+    padding: 12px 16px;
+    border-radius: 4px;
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
+@media (max-width: 768px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-modal {
+        padding: 10px;
+    }
+
+    .news-modal-content {
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: 12px;
+    }
+
+    .news-modal-image {
+        height: 250px;
+    }
+
+    .news-modal-body {
+        padding: 15px;
+    }
+
+    .news-modal-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .news-modal-text {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .gallery-images {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
+
+    .gallery-img {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-modal {
+        padding: 5px;
+    }
+
+    .news-modal-content {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 8px;
+    }
+
+    .news-modal-image {
+        height: 200px;
+    }
+
+    .news-modal-body {
+        padding: 12px;
+    }
+
+    .news-modal-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .news-modal-text {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .gallery-images {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .gallery-img {
+        height: 100px;
+    }
+
+    .news-modal-close {
+        font-size: 24px;
+        top: 8px;
+        right: 10px;
+    }
+}
+
+/* PAGINACIJA ZA FRONTEND */
+.news-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-page-link {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #4a9eff;
+    border: 1px solid rgba(74, 158, 255, 0.5);
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.news-page-link:hover {
+    background: rgba(74, 158, 255, 0.2);
+    border-color: #4a9eff;
+}
+
+.news-page-link.active {
+    background: #4a9eff;
+    color: #fff;
+    border-color: #4a9eff;
+    cursor: default;
+}
+
+/* Lightbox styles */
+.image-lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.image-lightbox.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.lightbox-content {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-img {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10001;
+}
+
+.lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    user-select: none;
+    z-index: 10000;
+}
+
+.lightbox-prev {
+    left: 20px;
+}
+
+.lightbox-next {
+    right: 20px;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 10000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .lightbox-prev,
+    .lightbox-next {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .lightbox-prev {
+        left: 10px;
+    }
+    
+    .lightbox-next {
+        right: 10px;
+    }
+    
+    .lightbox-close {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .lightbox-img {
+        max-height: 70vh;
+    }
+}
+</style>
+
+{% endblock %}

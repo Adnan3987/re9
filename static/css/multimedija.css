@@ -1,0 +1,757 @@
+/* ===============================
+   MULTIMEDIJA WRAPPER
+================================ */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.multimedija-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  padding: 120px 60px;
+  color: #eee;
+  background: rgba(0,0,0,.50);
+  overflow: hidden;
+}
+
+/* BACK BUTTON */
+.multimedija-back {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  cursor: pointer;
+  opacity: 0.6;
+  letter-spacing: 3px;
+  user-select: none;
+  font-size: 0.9rem;
+  transition: opacity .25s ease;
+}
+.multimedija-back:hover { opacity: 1; }
+
+@media (max-width: 768px) {
+  .multimedija-wrapper {
+    padding: 100px 20px 20px;
+    flex-direction: column;
+  }
+  
+  .multimedija-back {
+    left: 20px;
+    top: 35px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ===============================
+   LEFT MENU
+================================ */
+.multimedija-menu {
+  width: 380px;
+  z-index: 10;
+}
+
+.multimedija-menu h1 {
+  font-size: 2.6rem;
+  letter-spacing: 8px;
+  margin: 0 0 36px;
+}
+
+.multimedija-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.multimedija-item {
+  margin: 0 0 22px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  opacity: .35;
+  transition: opacity .25s ease, transform .25s ease;
+  font-size: 1.2rem;
+}
+
+.multimedija-item:hover {
+  opacity: 1;
+  transform: translateX(10px);
+}
+
+.multimedija-item.active { 
+  opacity: 1; 
+}
+
+.multimedija-hint {
+  margin-top: 28px;
+  opacity: .5;
+  font-size: .95rem;
+}
+
+@media (max-width: 768px) {
+  .multimedija-menu {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .multimedija-menu h1 {
+    font-size: 1.8rem;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .multimedija-item {
+    font-size: 0.95rem;
+  }
+  
+  .multimedija-hint {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===============================
+   RIGHT GALLERY
+================================ */
+.multimedija-gallery {
+  position: relative;
+  flex: 1;
+  padding: 0 20px 0 30px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.3) rgba(255,255,255,.05);
+}
+
+/* Custom scroll (mobile + desktop) */
+.multimedija-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+
+.multimedija-gallery::-webkit-scrollbar-track {
+  background: rgba(255,255,255,.05);
+}
+
+.multimedija-gallery::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.3);
+  border-radius: 10px;
+}
+
+.multimedija-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,.45);
+}
+
+@media (max-width: 768px) {
+  .multimedija-gallery {
+    padding: 0;
+    flex: 1;
+  }
+}
+
+.multimedija-gallery h2 {
+  font-size: 2rem;
+  letter-spacing: 6px;
+  margin: 0 0 32px;
+  opacity: 0.9;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding-bottom: 40px;
+}
+
+/* ===============================
+   STORY CARDS (PRIČA)
+================================ */
+.story-wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 40px;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 100%;
+  padding: 40px 30px 40px 20px;
+}
+
+.cards-deck {
+  position: relative;
+  width: 480px;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.story-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,.8);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.6s ease;
+  box-shadow: 0 15px 50px rgba(0,0,0,.8);
+}
+
+.story-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.4) 100%);
+  z-index: 1;
+}
+
+.story-text-area {
+  flex: 0 0 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+}
+
+.story-text-content {
+  overflow-y: auto;
+  max-height: 340px;
+  padding-right: 15px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.3) rgba(255,255,255,.05);
+}
+
+.story-text-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.story-text-content::-webkit-scrollbar-track {
+  background: rgba(255,255,255,.05);
+}
+
+.story-text-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.3);
+  border-radius: 10px;
+}
+
+.story-text-content h3 {
+  font-size: 1.6rem;
+  letter-spacing: 3px;
+  margin: 0 0 16px;
+  opacity: 1;
+  color: #fff;
+  text-shadow: 2px 2px 8px rgba(0,0,0,.7);
+}
+
+.story-text-content p {
+  font-size: 0.98rem;
+  line-height: 1.85;
+  color: #f0f0f0;
+  margin: 0 0 16px 0;
+  opacity: 0.95;
+  letter-spacing: 0.4px;
+  text-shadow: 1px 1px 4px rgba(0,0,0,.6);
+}
+
+.story-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+.story-counter {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,.5);
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .story-wrapper {
+    flex-direction: column;
+    padding: 20px;
+    gap: 30px;
+  }
+  
+  .cards-deck {
+    width: 100%;
+    max-width: 300px;
+    height: 380px;
+  }
+  
+  .story-text-area {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  
+  .story-text-content {
+    max-height: 250px;
+  }
+  
+  .story-text-content h3 {
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+  }
+  
+  .story-text-content p {
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+}
+
+/* ===============================
+   GALLERY ITEM
+================================ */
+.gallery-item {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: rgba(0,0,0,.7);
+  border: 1px solid rgba(255,255,255,.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,.6);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .3s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+.gallery-item .play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.4);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.gallery-item:hover .play-overlay {
+  opacity: 1;
+}
+
+.gallery-item .play-icon {
+  font-size: 4rem;
+  color: #fff;
+  text-shadow: 0 4px 12px rgba(0,0,0,.8);
+}
+
+.gallery-item .item-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,.9));
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+}
+
+.gallery-item .item-price {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0,0,0,.7);
+  padding: 6px 12px;
+  border-radius: 3px;
+  letter-spacing: 2px;
+}
+
+/* ===============================
+   GAMEPLAY CONTROLS
+================================ */
+.gallery-grid.controls-mode {
+  display: block;
+}
+
+.controls-layout {
+  display: grid;
+  grid-template-columns: minmax(440px, 1.25fr) minmax(280px, 0.75fr);
+  gap: 28px;
+  align-items: center;
+  width: 100%;
+}
+
+.controller-card,
+.legend-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.controller-title {
+  font-size: 1rem;
+  letter-spacing: 3px;
+  margin: 0 0 12px;
+  opacity: 0.9;
+}
+
+.controller-image {
+  position: relative;
+  width: 100%;
+}
+
+.controller-image img,
+.legend-card img {
+  width: 100%;
+  display: block;
+  border-radius: 6px;
+}
+
+.hotspot {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.hotspot:hover .hotspot-number {
+  background: #8b6f47;
+  box-shadow: 0 4px 12px rgba(0,0,0,.8), inset 0 1px 2px rgba(255,255,255,.3);
+}
+
+.hotspot-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #6b5344;
+  color: #1a1a1a;
+  font-weight: 900;
+  font-size: 11px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.8), inset 0 1px 2px rgba(255,255,255,.3);
+  border: 1.5px solid rgba(255,255,255,.4);
+  transition: all 0.3s ease;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.hotspot-tooltip {
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(2px);
+  white-space: nowrap;
+  background: linear-gradient(135deg, #a08060 0%, #8b7355 100%);
+  color: #0a0a0a;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255,255,255,.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-shadow: 
+    0 1px 2px rgba(0,0,0,.3),
+    0 0 4px rgba(255,255,255,.15);
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,.8),
+    0 0 20px rgba(160,128,96,.4),
+    inset 0 1px 0 rgba(255,255,255,.3),
+    inset 0 -1px 0 rgba(0,0,0,.15),
+    0 0 15px rgba(255,200,100,.25);
+  z-index: 2;
+  backdrop-filter: blur(8px);
+  position: relative;
+  animation: popupEntry 0.3s ease-out;
+}
+
+@keyframes popupEntry {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(12px) scale(1);
+  }
+}
+
+.hotspot:hover .hotspot-tooltip {
+  animation: popupEntry 0.3s ease-out;
+}
+
+.hotspot:hover .hotspot-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(12px);
+  animation: popupEntry 0.3s ease-out;
+}
+
+.hotspot-tooltip::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #8b7355;
+  opacity: 1;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.4));
+}
+
+@media (max-width: 1080px) {
+  .controls-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .controller-title {
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+  }
+  
+  .hotspot-tooltip {
+    font-size: 0.82rem;
+  }
+}
+
+/* ===============================
+   VIDEO LIGHTBOX
+================================ */
+.video-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  backdrop-filter: blur(4px);
+  transition: opacity .3s ease, visibility .3s ease;
+}
+
+.video-lightbox.show {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.video-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 36px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .25s ease;
+  z-index: 10;
+}
+
+.video-close:hover { opacity: 1; }
+
+.video-container {
+  width: min(96vw, 1200px);
+  aspect-ratio: 16 / 9;
+  height: auto;
+  max-height: 85vh;
+  background: #000;
+  border: 1px solid rgba(255,255,255,.1);
+  overflow: hidden;
+}
+
+#lightboxVideo {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===============================
+   IMAGE LIGHTBOX
+================================ */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+
+.image-lightbox.show {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.image-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 36px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .25s ease;
+  z-index: 10;
+}
+
+.image-close:hover { opacity: 1; }
+
+.image-prev,
+.image-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  border: 0;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 36px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .25s ease, background .25s ease;
+  z-index: 10;
+}
+
+.image-prev { left: 24px; }
+.image-next { right: 24px; }
+
+.image-prev:hover,
+.image-next:hover {
+  opacity: 1;
+  background: rgba(0,0,0,.8);
+}
+
+#lightboxImage {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+}
+
+.image-counter {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: rgba(0,0,0,.7);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+}
+
+.image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.purchase-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 14px 44px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .25s ease;
+  z-index: 11;
+  text-transform: uppercase;
+  display: none;
+}
+
+.purchase-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 28px rgba(0,0,0,.55);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 980px) {
+  .multimedija-wrapper { 
+    padding: 90px 26px;
+    flex-direction: column;
+  }
+  
+  .multimedija-menu { 
+    width: 100%;
+    margin-bottom: 32px;
+  }
+  
+  .multimedija-menu h1 { 
+    font-size: 2rem; 
+  }
+  
+  .multimedija-gallery { 
+    padding: 0; 
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .video-container {
+    width: 98vw;
+    max-height: 60vh;
+  }
+}

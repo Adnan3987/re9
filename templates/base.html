@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Resident Evil: Requiem{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#8B0000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RE9">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo/icon-192.png') }}">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
+    {% block head %}{% endblock %}
+
+    <!-- FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="preload {{ request.endpoint }}">
+
+
+    <!-- BACKGROUND VIDEO -->
+    <video autoplay muted loop id="bg-video">
+        <source src="{{ url_for('static', filename='video/bg-loop.mp4') }}" type="video/mp4">
+    </video>
+
+    <!-- OVERLAY -->
+    <div class="overlay"></div>
+
+    <!-- GLOBAL AUDIO -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="{{ url_for('static', filename='audio/ambient.mp3') }}" type="audio/mpeg">
+    </audio>
+
+    <div id="sound-toggle" title="Uključi / isključi zvuk">
+        🔇
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <main id="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- GLOBAL JS -->
+    <script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+          .then(reg => console.log('✅ PWA Service Worker registrovan'))
+          .catch(err => console.log('❌ Service Worker greška:', err));
+      });
+    }
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

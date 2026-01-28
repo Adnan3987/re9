@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-login-wrapper">
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <h1 class="admin-login-title">CMS LOGIN</h1>
+            
+            {% if error %}
+            <div class="admin-error-message">{{ error }}</div>
+            {% endif %}
+            
+            <form method="POST" class="admin-login-form">
+                <div class="admin-form-group">
+                    <label for="username" class="admin-label">Korisničko ime</label>
+                    <input type="text" id="username" name="username" class="admin-input" required>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="password" class="admin-label">Lozinka</label>
+                    <input type="password" id="password" name="password" class="admin-input" required>
+                </div>
+                
+                <button type="submit" class="admin-btn-primary">ULOGOVATI SE</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-login-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admin-login-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+.admin-login-card {
+    background: linear-gradient(135deg, rgba(15, 30, 60, 0.95) 0%, rgba(20, 40, 80, 0.95) 100%);
+    border: 2px solid rgba(0, 212, 255, 0.4);
+    border-radius: 16px;
+    padding: 50px 45px;
+    box-shadow: 
+        0 25px 70px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(0, 212, 255, 0.2),
+        0 0 40px rgba(0, 212, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.admin-login-title {
+    color: #00ff88;
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.admin-error-message {
+    background: rgba(255, 68, 85, 0.15);
+    border: 2px solid #ff4455;
+    color: #ff9999;
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.admin-form-group {
+    margin-bottom: 25px;
+}
+
+.admin-label {
+    display: block;
+    color: #00ff88;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(10, 15, 35, 0.7);
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-input::placeholder {
+    color: #606080;
+}
+
+.admin-input:focus {
+    outline: none;
+    border-color: #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3), inset 0 0 5px rgba(0, 255, 136, 0.1);
+    background: rgba(15, 30, 60, 0.9);
+}
+
+.admin-btn-primary {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+}
+
+.admin-btn-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(0, 212, 255, 0.5);
+}
+
+.admin-btn-primary:active {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .admin-login-card {
+        padding: 35px 25px;
+    }
+
+    .admin-login-title {
+        font-size: 28px;
+    }
+}
+</style>
+
+{% endblock %}

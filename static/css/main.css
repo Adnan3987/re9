@@ -1,0 +1,722 @@
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Oswald', sans-serif;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    background: black;
+    color: #fff;
+}
+
+/* Focus variables for background framing */
+:root {
+    --bg-focus-x: 50%; /* horizontal focus (0% left, 100% right) */
+    --bg-focus-y: 40%; /* vertical focus (0% top, 100% bottom) */
+}
+
+/* VIDEO BACKGROUND */
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    object-position: var(--bg-focus-x) var(--bg-focus-y);
+    z-index: -2;
+
+    filter: brightness(1.50) contrast(1.1);
+}
+
+/* DARK OVERLAY */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: -1;
+}
+
+/* Mobile framing tweak: keep Leon's head in view */
+@media (max-width: 768px) {
+    :root {
+        --bg-focus-x: 52%;
+        --bg-focus-y: 32%;
+    }
+}
+
+/* ENTER SCREEN */
+.enter-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 0 40px;
+    gap: 40px;
+}
+
+.hero-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-logo {
+    margin-bottom: 0;
+    position: relative;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-img {
+    max-width: 100%;
+    max-height: 600px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .logo-img {
+        max-height: 300px;
+    }
+}
+
+/* PLATFORMS (BOTTOM LEFT) */
+.hero-platforms {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    z-index: 8;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+}
+
+/* SOCIAL NETWORKS (BOTTOM RIGHT) */
+.hero-social {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 8;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+}
+
+.icon-link {
+    opacity: 0.6;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    min-width: 96px;
+    min-height: 96px;
+}
+
+.icon-img {
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%) invert(1);
+    transition: all 0.3s ease;
+}
+
+.icon-link:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.icon-link:hover .icon-img {
+    filter: brightness(0.7) saturate(100%) invert(1);
+}
+
+/* RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+    /* Wrapper za sve ikonice na mobilnom */
+    .hero-platforms,
+    .hero-social {
+        width: 100%;
+        max-width: 350px;
+    }
+    
+    /* Društvene mreže - prvi red (gore) */
+    .hero-social {
+        position: fixed;
+        bottom: 130px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 6px;
+        justify-content: center;
+    }
+    
+    /* Gaming platforme - drugi red (dolje) */
+    .hero-platforms {
+        position: fixed;
+        bottom: 60px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 6px;
+        justify-content: center;
+    }
+    
+    .icon-link {
+        min-width: 50px;
+        min-height: 50px;
+        padding: 3px;
+        flex-shrink: 0;
+    }
+    
+    .icon-img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    /* Podizanje PRITISNI ENTER na mobilnom */
+    .enter {
+        bottom: 220px !important;
+        font-size: 1rem;
+    }
+}
+
+.title {
+    font-size: 4rem;
+    letter-spacing: 4px;
+}
+
+.subtitle {
+    margin-top: -80px;
+    margin-bottom: 16px;
+    font-size: 1.56rem;
+    opacity: 0.7;
+    letter-spacing: 2px;
+}
+
+.enter {
+    position: fixed;
+    bottom: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    opacity: 0.8;
+    animation: blink 1.5s infinite;
+    cursor: pointer;
+    z-index: 9;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+}
+
+
+.fade-out {
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: scale(1.05);
+    }
+}
+
+
+
+
+
+
+#sound-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10;
+    opacity: 0.7;
+}
+
+#sound-toggle:hover {
+    opacity: 1;
+}
+
+
+
+
+
+
+/* =========================
+   GAME MAIN MENU
+========================= */
+
+.main-menu {
+    position: fixed;
+    bottom: 80px;
+    left: 80px;
+    z-index: 5;
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+.menu-list {
+    list-style: none;
+}
+
+.menu-list li {
+    font-size: 1.7rem;
+    letter-spacing: 6px;
+    margin: 22px 0;
+    opacity: 0.65;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.35s ease;
+}
+
+.menu-list li:hover {
+    opacity: 1;
+    transform: translateX(18px);
+    text-shadow: 0 0 8px rgba(255,255,255,0.25);
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* SUBTLE ELECTRIC FLICKER */
+.menu-list li {
+    animation: electricFlicker 6s infinite;
+}
+
+@keyframes electricFlicker {
+    0%   { opacity: 0.65; }
+    48%  { opacity: 0.65; }
+    49%  { opacity: 0.75; }
+    50%  { opacity: 0.6; }
+    51%  { opacity: 0.7; }
+    100% { opacity: 0.65; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.codex-wrapper {
+    position: fixed;
+    inset: 0;
+    padding: 120px 80px;
+    display: flex;
+    gap: 80px;
+    color: #e5e5e5;
+    z-index: 6;
+    background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.75),
+        rgba(0,0,0,0.35),
+        rgba(0,0,0,0.0)
+    );
+}
+
+.codex-back {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    opacity: 0.6;
+    cursor: pointer;
+    user-select: none;
+}
+
+.codex-back:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .enter-screen {
+        flex-direction: column;
+        padding: 80px 20px 140px;
+    }
+    
+    .hero-platforms {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: auto;
+    }
+    
+    .platforms-list {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-start;
+    }
+    
+    .platform-link {
+        padding: 0;
+    }
+    
+    .platform-link svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .hero-social {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        left: auto;
+    }
+    
+    .social-list {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+    
+    .social-link {
+        width: 38px;
+        height: 38px;
+        font-size: 1.4rem;
+    }
+    
+    .logo-img {
+        max-height: 380px;
+    }
+    
+    .title {
+        font-size: 2.2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.3rem;
+        margin-top: 6px;
+        margin-bottom: 14px;
+    }
+    
+    .enter {
+        font-size: 1.17rem;
+    }
+}
+
+.codex-menu {
+    width: 360px;
+}
+
+.codex-title {
+    font-size: 2.6rem;
+    letter-spacing: 6px;
+    margin-bottom: 50px;
+}
+
+.codex-menu-scroll {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 12px;
+    scrollbar-width: none;
+}
+
+.codex-menu-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.codex-list {
+    list-style: none;
+    padding: 0;
+}
+
+.codex-item {
+    margin-bottom: 24px;
+    letter-spacing: 4px;
+    font-size: 1.1rem;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.codex-item:hover,
+.codex-item.active {
+    opacity: 1;
+    transform: translateX(14px);
+}
+
+.codex-panel {
+    width: 520px;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 24px;
+    margin-left: 120px;
+    position: relative;
+}
+
+/* SCROLL */
+.codex-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.codex-panel::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+
+.codex-panel::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+}
+
+.codex-section {
+    display: none;
+}
+
+.codex-section.active {
+    display: block;
+}
+
+.codex-section h2 {
+    letter-spacing: 4px;
+    margin-bottom: 24px;
+}
+
+.codex-section p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    opacity: 0.85;
+    margin-bottom: 18px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.codex-scroll-hint {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    font-size: 1.4rem;
+    opacity: 0.6;
+    animation: floatHint 2s infinite;
+}
+
+@keyframes floatHint {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+}
+
+/* ===============================
+   RESPONSIVE CODEX
+================================ */
+@media (max-width: 1024px) {
+  .codex-wrapper {
+    padding: 100px 40px;
+    gap: 40px;
+  }
+  
+  .codex-menu {
+    width: 280px;
+  }
+  
+  .codex-menu-scroll {
+    max-height: 60vh;
+  }
+  
+  .codex-panel {
+    width: 380px;
+    margin-left: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .codex-wrapper {
+    flex-direction: column;
+    padding: 100px 20px 20px;
+    gap: 0;
+    overflow-x: hidden;
+  }
+  
+  .codex-menu {
+    width: 100%;
+    position: relative;
+    z-index: 20;
+    margin-bottom: 20px;
+  }
+  
+  .codex-title {
+    font-size: 2rem;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  
+  .codex-menu-scroll {
+    max-height: 200px;
+    padding: 12px;
+    background: transparent;
+    overflow-x: hidden;
+  }
+  
+  .codex-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+  }
+  
+  .codex-item {
+    margin-bottom: 16px;
+    padding: 0;
+    border: none;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    transition: all .25s ease;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  .codex-item:hover {
+    opacity: 1;
+    transform: translateX(8px);
+  }
+  
+  .codex-item.active {
+    background: transparent;
+  }
+  
+  .codex-panel {
+    width: 100%;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px 0;
+    margin-left: 0;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .codex-wrapper {
+    padding: 80px 16px 16px;
+  }
+  
+  .codex-title {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+  }
+  
+  .codex-menu-scroll {
+    max-height: 180px;
+    padding: 10px;
+  }
+  
+  .codex-item {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 6px 10px;
+  }
+  
+  .codex-section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+  
+  .codex-section p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  
+  .codex-scroll-hint {
+    display: none;
+  }
+  
+  .codex-panel {
+    max-height: calc(100vh - 260px);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.codex-section{
+  opacity: 0;
+  transform: translateY(20px);
+}
+.codex-section.active{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+
+
+
+/* BACK */
+.likovi-back{
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  cursor: pointer;
+  opacity: 0.6;
+  letter-spacing: 3px;
+  user-select: none;
+  font-size: 0.9rem;
+}
+.likovi-back:hover{ opacity: 1; }
+
+@media (max-width: 768px) {
+  .likovi-back {
+    left: 20px;
+    top: 35px;
+    font-size: 0.85rem;
+  }
+}
+
+
+body.likovi .main-menu {
+    display: none !important;
+}

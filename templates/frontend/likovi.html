@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{# =========================
+   HEAD (CSS)
+========================= #}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/likovi.css') }}">
+{% endblock %}
+
+{# =========================
+   TITLE
+========================= #}
+{% block title %}
+Resident Evil: Requiem - Likovi
+{% endblock %}
+
+{# =========================
+   CONTENT
+========================= #}
+{% block content %}
+
+<div class="likovi-wrapper">
+
+  <!-- BACK -->
+  <div class="likovi-back" onclick="goBack()">← NAZAD</div>
+
+  <!-- LEFT MENU -->
+  <aside class="likovi-menu">
+    <h1>KARAKTERI</h1>
+
+    <ul class="likovi-list" role="tablist" aria-label="Likovi">
+      <li class="likovi-item active"
+          data-char="leon"
+          role="tab"
+          aria-selected="true"
+          tabindex="0">
+        LEON S. KENNEDY
+      </li>
+
+      <li class="likovi-item"
+          data-char="ashley"
+          role="tab"
+          aria-selected="false"
+          tabindex="0">
+        GRACE ASHCROFT
+      </li>
+
+      <li class="likovi-item"
+          data-char="alyssa"
+          role="tab"
+          aria-selected="false"
+          tabindex="0">
+        ALYSSA ASHCROFT
+      </li>
+    </ul>
+
+    <div class="likovi-hint"></div>
+  </aside>
+
+  <!-- RIGHT STAGE -->
+  <section class="likovi-stage" aria-hidden="true">
+
+    <!-- Leon -->
+    <img class="char sil leon"
+         src="{{ url_for('static', filename='img/characters/leon.png') }}"
+         alt="Leon silhouette">
+    <img class="char render leon"
+         src="{{ url_for('static', filename='img/characters/leon.png') }}"
+         alt="Leon S. Kennedy">
+
+    <!-- Ashley -->
+    <img class="char sil ashley"
+         src="{{ url_for('static', filename='img/characters/ashley.png') }}"
+         alt="Grace silhouette">
+    <img class="char render ashley"
+         src="{{ url_for('static', filename='img/characters/ashley.png') }}"
+         alt="Grace Ashcroft">
+
+    <!-- Alyssa -->
+    <img class="char sil alyssa"
+         src="{{ url_for('static', filename='img/characters/alyssa.png') }}"
+         alt="Alyssa silhouette">
+    <img class="char render alyssa"
+         src="{{ url_for('static', filename='img/characters/alyssa.png') }}"
+         alt="Alyssa Ashcroft">
+
+  </section>
+</div>
+
+<!-- =========================
+     DOSIJE MODAL
+========================= -->
+<div id="likModal" class="lik-modal" aria-hidden="true">
+  <div class="lik-modal-box" role="dialog" aria-modal="true">
+
+    <button class="close" type="button" aria-label="Zatvori">×</button>
+
+    <h2 id="modalTitle"></h2>
+
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="info">DOSIJE</button>
+      <button class="tab-btn" data-tab="gallery">GALERIJA</button>
+      <button class="tab-btn" data-tab="video">VIDEO</button>
+    </div>
+
+    <!-- SCROLLABLE CONTENT WRAPPER -->
+    <div class="modal-content-scroll">
+
+      <!-- INFO SECTION -->
+      <div class="modal-section" id="tab-info">
+        <div class="section-inner">
+          <div class="modal-media">
+            <img id="modalImg" alt="">
+          </div>
+          <p id="modalText"></p>
+        </div>
+      </div>
+
+      <!-- GALERIJA SECTION -->
+      <div class="modal-section" id="tab-gallery">
+        <div class="section-inner">
+          <h3>GALERIJA</h3>
+          <div class="modal-gallery" id="modalGallery"></div>
+        </div>
+      </div>
+
+      <!-- VIDEO SECTION -->
+      <div class="modal-section" id="tab-video">
+        <div class="section-inner">
+          <h3>VIDEO</h3>
+          <div class="modal-trailer">
+            <button class="play-btn" id="playBtn">
+              <span>▶ PLAY TRAILER</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================
+     IMAGE LIGHTBOX (GALLERY)
+========================= -->
+<div id="imgLightbox" class="img-lightbox" aria-hidden="true">
+  <button class="img-close" aria-label="Zatvori">×</button>
+  <button class="img-nav img-prev" aria-label="Prethodna slika">‹</button>
+  <img id="lightboxImg" alt="">
+  <button class="img-nav img-next" aria-label="Sljedeća slika">›</button>
+  <div class="img-counter"><span id="imgCurrent">1</span> / <span id="imgTotal">1</span></div>
+</div>
+
+<!-- =========================
+     VIDEO LIGHTBOX (FULLSCREEN)
+========================= -->
+<div id="videoLightbox" class="video-lightbox" aria-hidden="true">
+  <button class="video-close" aria-label="Zatvori">×</button>
+  <button class="video-fullscreen" id="videoFullscreenBtn" aria-label="Fullscreen">⛶</button>
+  <div class="video-container">
+    <iframe id="lightboxVideo" 
+            title="Video" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen></iframe>
+  </div>
+</div>
+
+{% endblock %}
+
+{# =========================
+   SCRIPTS
+========================= #}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/likovi.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-container">
+    <!-- BACK BUTTON -->
+    <a href="{{ url_for('admin.dashboard') }}" class="admin-back-btn">← NAZAD</a>
+
+    <div class="admin-backup-card">
+        <h1 class="admin-page-title">BACKUP SISTEM</h1>
+
+        <!-- PORUKA -->
+        {% if message %}
+        <div class="backup-message backup-message-{{ message_type }}">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <!-- PRAVI BACKUP -->
+        <div class="backup-section">
+            <h2 class="backup-subtitle">Kreiraj Novi Backup</h2>
+            <p class="backup-desc">Kliknite na dugme ispod da kreirate backup kompletne baze podataka. Ovo će čuvati sve vijesti i podatke.</p>
+            <form method="POST" action="{{ url_for('admin.backup') }}" class="backup-form">
+                <input type="hidden" name="action" value="create">
+                <button type="submit" class="admin-btn-backup">✓ KREIRAJ BACKUP</button>
+            </form>
+        </div>
+
+        <!-- INFORMACIJE O BAZI -->
+        <div class="backup-section">
+            <h2 class="backup-subtitle">Trenutna Baza</h2>
+            <div class="backup-info-box">
+                <p><strong>Veličina baze:</strong> {{ backup_info.db_size }}</p>
+                <p><strong>Broj backupa:</strong> {{ backup_info.total_backups }}</p>
+                {% if backup_info.last_backup %}
+                    <p><strong>Zadnji backup:</strong> {{ backup_info.last_backup.date }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- LISTA BACKUPA -->
+        <div class="backup-section">
+            <h2 class="backup-subtitle">Postojeći Backupi</h2>
+            {% if backup_info.backups %}
+                <div class="backup-list">
+                    {% for backup in backup_info.backups %}
+                    <div class="backup-item">
+                        <div class="backup-info">
+                            <span class="backup-name">{{ backup.filename }}</span>
+                            <span class="backup-date">{{ backup.date }}</span>
+                            <span class="backup-size">{{ backup.size }}</span>
+                        </div>
+                        <div class="backup-actions">
+                            <form method="POST" action="{{ url_for('admin.backup') }}" style="display: inline;">
+                                <input type="hidden" name="action" value="restore">
+                                <input type="hidden" name="backup_filename" value="{{ backup.filename }}">
+                                <button type="submit" class="admin-btn-restore" onclick="return confirm('Vratiti bazu iz ovog backupa? Sve trenutne promjene će biti izgubljene!')">VRATI</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.backup') }}" style="display: inline;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="backup_filename" value="{{ backup.filename }}">
+                                <button type="submit" class="admin-btn-delete" onclick="return confirm('Obrisati ovaj backup?')">OBRIŠI</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="backup-empty">Nema dostupnih backupa. Kreiraj prvi backup!</p>
+            {% endif %}
+        </div>
+
+        <!-- AUTO-BACKUP INFO -->
+        <div class="backup-section">
+            <h2 class="backup-subtitle">ℹ️ Informacije</h2>
+            <p class="backup-desc">
+                <strong>Kako funkcionira:</strong><br>
+                • Kliknite "KREIRAJ BACKUP" da savedate trenutno stanje baze<br>
+                • Kliknite "VRATI" da vratite bazu na starije stanje<br>
+                • Kliknite "OBRIŠI" da uklonite stariji backup<br>
+                <br>
+                ⚠️ <strong>VAŽNO:</strong> Ako obrišete vijest, možete je vratiti koristeći backup!
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: auto;
+    overflow: auto;
+}
+
+.admin-container {
+    position: relative;
+    min-height: 100vh;
+    padding: 30px;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    color: #e0e0e0;
+    font-family: 'Arial', sans-serif;
+}
+
+.admin-back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    background: #1a2d4d;
+    color: #00d4ff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    border: 1px solid #00d4ff;
+}
+
+.admin-back-btn:hover {
+    background: #00d4ff;
+    color: #000;
+}
+
+.admin-backup-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #1a2d4d 0%, #0f1f38 100%);
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+}
+
+.admin-page-title {
+    color: #00d4ff;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    letter-spacing: 2px;
+}
+
+.backup-section {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.backup-section:last-child {
+    border-bottom: none;
+}
+
+.backup-subtitle {
+    color: #00ff88;
+    font-size: 18px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.backup-desc {
+    color: #b0b0b0;
+    font-size: 13px;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.backup-form {
+    display: flex;
+}
+
+.admin-btn-backup {
+    flex: 1;
+    padding: 12px;
+    background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-btn-backup:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+}
+
+.backup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.backup-item {
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 4px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.backup-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.backup-name {
+    color: #00d4ff;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.backup-date {
+    color: #a0a0a0;
+    font-size: 12px;
+}
+
+.backup-size {
+    color: #909090;
+    font-size: 11px;
+}
+
+.backup-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-btn-download,
+.admin-btn-delete,
+.admin-btn-restore {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-btn-download {
+    background: #00d4ff;
+    color: #000;
+}
+
+.admin-btn-download:hover {
+    background: #00ff88;
+}
+
+.admin-btn-restore {
+    background: #00ff88;
+    color: #000;
+}
+
+.admin-btn-restore:hover {
+    background: #00dd66;
+}
+
+.admin-btn-delete {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.admin-btn-delete:hover {
+    background: #ff4444;
+}
+
+/* PORUKE */
+.backup-message {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    border-left: 4px solid;
+}
+
+.backup-message-success {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border-left-color: #00ff88;
+}
+
+.backup-message-error {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    border-left-color: #ff6b6b;
+}
+
+/* INFO BOX */
+.backup-info-box {
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.backup-info-box p {
+    color: #b0b0b0;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.backup-info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.backup-info-box strong {
+    color: #00d4ff;
+}
+
+/* PRAZNO */
+.backup-empty {
+    color: #999;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .admin-backup-card {
+        padding: 20px;
+    }
+    
+    .admin-page-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    
+    .backup-subtitle {
+        font-size: 16px;
+    }
+    
+    .backup-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .admin-btn-backup {
+        width: 100%;
+    }
+    
+    .backup-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .backup-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px !important;
+    }
+    
+    .admin-btn-restore,
+    .admin-btn-delete {
+        width: 100%;
+        padding: 12px !important;
+    }
+    
+    .backup-desc {
+        font-size: 12px;
+    }
+    
+    .backup-info-box {
+        padding: 12px;
+    }
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="codex-wrapper">
+
+    <!-- BACK -->
+     <div class="likovi-back" onclick="goBack()">← NAZAD</div>
+
+    <!-- LEFT MENU -->
+    <div class="codex-menu">
+        <h1 class="codex-title">HRONIKA</h1>
+
+        <div class="codex-menu-scroll">
+            <ul class="codex-list">
+            <li class="codex-item active" data-target="bio">BIOORUŽJA & ORGANIZMI</li>
+            <li class="codex-item" data-target="umbrella">UMBRELLA CORPORATION</li>
+            <li class="codex-item" data-target="raccoon">RACCOON CITY INCIDENT</li>
+            <li class="codex-item" data-target="requiem">POVEZANOST SA REQUIEMOM</li>
+        </ul>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="codex-panel">
+
+        <div class="codex-scroll-hint">↓</div>
+
+        <!-- BIO -->
+        <section class="codex-section active" id="bio">
+            <h2>BIOORUŽJA & ORGANIZMI</h2>
+
+            <p>
+                Razvoj bio-oružja u Resident Evil univerzumu započinje kao
+                naučni pokušaj produženja života i kontrole bolesti,
+                ali vrlo brzo prerasta u globalnu biološku katastrofu.
+                Granica između medicine i oružja biva izbrisana.
+            </p>
+
+            <p>
+                T-Virus predstavlja prvu masovno korištenu biološku supstancu,
+                dizajniranu da reanimira mrtvo tkivo i poveća fizičku izdržljivost.
+                Njegova ekstremna nestabilnost dovodi do nekontrolisanih mutacija
+                i potpunog kolapsa urbanih sredina.
+            </p>
+
+            <p>
+                G-Virus nastaje kao pokušaj savršenije evolucije – organizam
+                sposoban za samostalnu adaptaciju i regeneraciju.
+                Za razliku od T-Virusa, G-Virus briše granice identiteta,
+                uništavajući ljudsku svijest.
+            </p>
+
+            <p>
+                Kasniji organizmi poput Las Plagas i Megamycete
+                označavaju prelazak sa klasičnih virusa na parazitske
+                i kolektivne biološke entitete,
+                uvodeći element kontrole uma i naslijeđene svijesti.
+            </p>
+        </section>
+
+        <!-- UMBRELLA -->
+        <section class="codex-section" id="umbrella">
+            <h2>UMBRELLA CORPORATION</h2>
+
+            <p>
+                Umbrella Corporation je multinacionalna kompanija koja je
+                pod maskom farmaceutskog giganta razvijala bio-oružja
+                za vojnu i političku dominaciju.
+            </p>
+
+            <p>
+                Njena interna struktura bila je strogo fragmentisana,
+                sa tajnim istraživačkim centrima širom svijeta,
+                čime je osigurana nevidljivost i negiranje odgovornosti.
+            </p>
+
+            <p>
+                Iako je Umbrella zvanično ugašena nakon Raccoon City incidenta,
+                njeno znanje i tehnologija nikada nisu nestali.
+                Bivši naučnici i privatne organizacije nastavljaju njen rad.
+            </p>
+
+            <p>
+                Upravo ta rasuta struktura čini Umbrellu trajnom prijetnjom,
+                čak i bez centralne komande.
+            </p>
+        </section>
+
+        <!-- RACCOON -->
+        <section class="codex-section" id="raccoon">
+            <h2>RACCOON CITY INCIDENT</h2>
+
+            <p>
+                Incident u Raccoon Cityju iz 1998. godine predstavlja
+                prelomni trenutak u modernoj istoriji bio-terorizma.
+            </p>
+
+            <p>
+                Nakon curenja T-Virusa, gradske institucije kolabiraju,
+                a civilno stanovništvo biva pretvoreno u zaražene entitete.
+                Grad tone u potpuni haos.
+            </p>
+
+            <p>
+                Američka vlada donosi ekstremnu odluku o nuklearnoj
+                eliminaciji grada kako bi spriječila širenje zaraze,
+                brišući Raccoon City sa mape.
+            </p>
+
+            <p>
+                Ovaj čin ostavlja duboke političke, moralne i psihološke
+                posljedice koje i dalje oblikuju svijet Resident Evila.
+            </p>
+        </section>
+
+        <!-- REQUIEM -->
+        <section class="codex-section" id="requiem">
+            <h2>POVEZANOST SA REQUIEMOM</h2>
+
+            <p>
+                Resident Evil: Requiem tematski se nadovezuje na
+                naslijeđe prethodnih katastrofa,
+                fokusirajući se na njihove dugoročne posljedice.
+            </p>
+
+            <p>
+                Umjesto jedne centralne prijetnje,
+                opasnost dolazi iz fragmentisanih ostataka
+                prošlih eksperimenata i ljudskih odluka.
+            </p>
+
+            <p>
+                Requiem istražuje krivicu, odgovornost i cijenu
+                preživljavanja u svijetu koji nikada nije sanirao
+                rane Raccoon Cityja.
+            </p>
+
+            <p>
+                Ovo poglavlje simbolizuje kraj jedne ere
+                i početak nove, mračnije faze biološke evolucije.
+            </p>
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hronika.js') }}"></script>
+{% endblock %}

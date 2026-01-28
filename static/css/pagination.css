@@ -1,0 +1,137 @@
+/* RESPONSIVE PAGINACIJA */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    padding: 20px 0;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Mobile paginacija - samo Nazad/Naprijed */
+.pagination-mobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.page-info {
+    font-weight: bold;
+    color: #00d4ff;
+    font-size: 14px;
+    padding: 0 10px;
+}
+
+/* Desktop paginacija - puni pregled sa točkicama */
+.pagination-desktop {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.page-link {
+    padding: 8px 12px;
+    border: 2px solid #00d4ff;
+    color: #00d4ff;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-block;
+    min-width: 40px;
+    text-align: center;
+    font-size: 14px;
+    background-color: transparent;
+}
+
+.page-link:hover {
+    background-color: #00d4ff;
+    color: #000;
+    transform: translateY(-1px);
+}
+
+.page-link.active {
+    background-color: #00d4ff;
+    color: #000;
+    border-color: #00d4ff;
+    cursor: default;
+}
+
+.page-link.disabled {
+    border-color: #444;
+    color: #444;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.page-link.disabled:hover {
+    background-color: transparent;
+    color: #444;
+    transform: none;
+}
+
+.page-dots {
+    padding: 8px 4px;
+    color: #00d4ff;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.first-page,
+.last-page {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.prev-page,
+.next-page {
+    font-size: 14px;
+}
+
+/* DESKTOP: Prikaži samo desktop paginaciju */
+@media (min-width: 768px) {
+    .pagination-mobile {
+        display: none;
+    }
+    
+    .pagination-desktop {
+        display: flex;
+    }
+}
+
+/* MOBILE: Prikaži samo mobile paginaciju */
+@media (max-width: 767px) {
+    .pagination-mobile {
+        display: flex;
+    }
+    
+    .pagination-desktop {
+        display: none;
+    }
+    
+    .page-link {
+        padding: 10px 8px;
+        font-size: 12px;
+        min-width: 35px;
+    }
+}
+
+/* TABLET VIEW */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .pagination-desktop {
+        display: flex;
+        gap: 6px;
+    }
+    
+    .page-link {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+}

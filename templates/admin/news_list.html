@@ -1,0 +1,525 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-container">
+    <!-- BACK BUTTON -->
+    <a href="{{ url_for('admin.dashboard') }}" class="admin-back-btn">← NAZAD</a>
+
+    <div class="admin-news-list">
+        <h1 class="admin-page-title">PREGLED VIJESTI</h1>
+
+        <div class="admin-list-actions">
+            <a href="{{ url_for('admin.news_create') }}" class="admin-btn-new">+ NOVA VIJEST</a>
+        </div>
+
+        <!-- PRETRAGA FORMA -->
+        <div class="search-container">
+            <h3 class="search-title">🔍 PRETRAGA</h3>
+            <form method="GET" action="{{ url_for('admin.news_list') }}" class="search-form">
+                <div class="search-row">
+                    <div class="search-field">
+                        <label for="search_title">Naslov:</label>
+                        <input type="text" id="search_title" name="search_title" placeholder="Pretraži po naslovu..." value="{{ search_title }}">
+                    </div>
+                    
+                    <div class="search-field">
+                        <label for="search_keywords">Ključne riječi:</label>
+                        <input type="text" id="search_keywords" name="search_keywords" placeholder="Pretraži po tekstu..." value="{{ search_keywords }}">
+                    </div>
+                </div>
+                
+                <div class="search-row">
+                    <div class="search-field">
+                        <label for="search_date_from">Datum od:</label>
+                        <input type="date" id="search_date_from" name="search_date_from" value="{{ search_date_from }}">
+                    </div>
+                    
+                    <div class="search-field">
+                        <label for="search_date_to">Datum do:</label>
+                        <input type="date" id="search_date_to" name="search_date_to" value="{{ search_date_to }}">
+                    </div>
+                </div>
+                
+                <div class="search-actions">
+                    <button type="submit" class="search-btn-find">🔎 PRETRAŽI</button>
+                    <a href="{{ url_for('admin.news_list') }}" class="search-btn-clear">🔄 OČISTI</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- VIJESTI LISTA -->
+        <table class="admin-news-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Naslov</th>
+                    <th>Datum</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if news.items %}
+                    {% for item in news.items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.news_edit', news_id=item.id) }}" class="admin-btn-edit">UREDI</a>
+                            <a href="{{ url_for('admin.news_delete', news_id=item.id) }}" class="admin-btn-delete" onclick="return confirm('Sigurno?')">OBRIŠI</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 20px; color: #999;">
+                        {% if search_title or search_keywords or search_date_from or search_date_to %}
+                            Nema rezultata za vašu pretragu
+                        {% else %}
+                            Nema vijesti
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- PAGINACIJA -->
+        <div class="pagination" id="pagination-container">
+            <!-- Mobile: Samo Nazad i Naprijed -->
+            <div class="pagination-mobile">
+                {% if news.has_prev %}
+                    <a href="{{ url_for('admin.news_list', page=news.prev_num) }}" class="page-link">‹ NAZAD</a>
+                {% else %}
+                    <span class="page-link disabled">‹ NAZAD</span>
+                {% endif %}
+                
+                <span class="page-info">{{ news.page }} / {{ news.pages }}</span>
+                
+                {% if news.has_next %}
+                    <a href="{{ url_for('admin.news_list', page=news.next_num) }}" class="page-link">NAPRIJED ›</a>
+                {% else %}
+                    <span class="page-link disabled">NAPRIJED ›</span>
+                {% endif %}
+            </div>
+
+            <!-- Desktop: Smart paginacija sa točkicama -->
+            <div class="pagination-desktop">
+                {% if news.has_prev %}
+                    <a href="{{ url_for('admin.news_list', page=1) }}" class="page-link first-page" title="Prva stranica">«</a>
+                    <a href="{{ url_for('admin.news_list', page=news.prev_num) }}" class="page-link prev-page" title="Prethodna">‹</a>
+                {% endif %}
+
+                {% set pages_to_show = [] %}
+                {% set current = news.page %}
+                {% set max_pages = news.pages %}
+                {% set show_count = 5 %}
+                {% set half = show_count // 2 %}
+                
+                {% if max_pages <= show_count %}
+                    {% set start_page = 1 %}
+                    {% set end_page = max_pages %}
+                {% else %}
+                    {% if current <= half + 1 %}
+                        {% set start_page = 1 %}
+                        {% set end_page = show_count %}
+                    {% elif current >= max_pages - half %}
+                        {% set start_page = max_pages - show_count + 1 %}
+                        {% set end_page = max_pages %}
+                    {% else %}
+                        {% set start_page = current - half %}
+                        {% set end_page = current + half %}
+                    {% endif %}
+                {% endif %}
+
+                {% if start_page > 1 %}
+                    <span class="page-dots">...</span>
+                {% endif %}
+
+                {% for page_num in range(start_page, end_page + 1) %}
+                    {% if page_num == current %}
+                        <span class="page-link active">{{ page_num }}</span>
+                    {% else %}
+                        <a href="{{ url_for('admin.news_list', page=page_num) }}" class="page-link">{{ page_num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if end_page < max_pages %}
+                    <span class="page-dots">...</span>
+                {% endif %}
+
+                {% if news.has_next %}
+                    <a href="{{ url_for('admin.news_list', page=news.next_num) }}" class="page-link next-page" title="Sljedeća">›</a>
+                    <a href="{{ url_for('admin.news_list', page=news.pages) }}" class="page-link last-page" title="Zadnja stranica">»</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: auto;
+    overflow: auto;
+}
+
+.admin-container {
+    position: relative;
+    min-height: 100vh;
+    padding: 30px;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    color: #e0e0e0;
+    font-family: 'Arial', sans-serif;
+}
+
+.admin-back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    background: #1a2d4d;
+    color: #00d4ff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    border: 1px solid #00d4ff;
+}
+
+.admin-back-btn:hover {
+    background: #00d4ff;
+    color: #000;
+}
+
+.admin-news-list {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #1a2d4d 0%, #0f1f38 100%);
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+}
+
+.admin-page-title {
+    color: #00d4ff;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+    letter-spacing: 2px;
+}
+
+/* PRETRAGA FORMA */
+.search-container {
+    background: linear-gradient(135deg, rgba(15, 30, 60, 0.8) 0%, rgba(20, 40, 80, 0.8) 100%);
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.search-title {
+    color: #00d4ff;
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.search-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .search-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.search-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-field label {
+    color: #00d4ff;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.search-field input {
+    padding: 10px 12px;
+    background: rgba(10, 15, 35, 0.9);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.search-field input:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    background: rgba(10, 15, 35, 1);
+}
+
+.search-field input::placeholder {
+    color: #666666;
+}
+
+.search-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.search-btn-find,
+.search-btn-clear {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    flex: 1;
+}
+
+.search-btn-find {
+    background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+    color: #000;
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+}
+
+.search-btn-find:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+}
+
+.search-btn-clear {
+    background: rgba(100, 100, 150, 0.3);
+    color: #a0a0c0;
+    border: 1px solid rgba(100, 100, 150, 0.5);
+}
+
+.search-btn-clear:hover {
+    background: rgba(100, 100, 150, 0.5);
+    color: #00d4ff;
+    border-color: #00d4ff;
+}
+
+@media (max-width: 768px) {
+    .search-container {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .search-form {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .search-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .search-field {
+        width: 100%;
+    }
+    
+    .search-field input,
+    .search-field textarea {
+        width: 100% !important;
+    }
+    
+    .search-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .search-btn-find,
+    .search-btn-clear {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    .admin-news-table {
+        font-size: 12px;
+    }
+    
+    .admin-news-table th,
+    .admin-news-table td {
+        padding: 8px;
+    }
+    
+    .admin-btn-edit,
+    .admin-btn-delete {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-container {
+        padding: 15px;
+    }
+    
+    .admin-page-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .search-form {
+        gap: 10px;
+    }
+    
+    .search-field label {
+        font-size: 12px;
+    }
+    
+    .search-field input,
+    .search-field textarea {
+        font-size: 12px;
+        padding: 8px;
+    }
+    
+    .admin-news-table {
+        font-size: 11px;
+    }
+    
+    .admin-news-table th,
+    .admin-news-table td {
+        padding: 6px;
+    }
+}
+
+.admin-list-actions {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.admin-btn-new {
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+    color: #000;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.admin-btn-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 212, 255, 0.3);
+}
+
+.admin-news-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-news-table th {
+    background: #0f1f38;
+    color: #00d4ff;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #00d4ff;
+}
+
+.admin-news-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.admin-news-table tr:hover {
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.admin-btn-edit,
+.admin-btn-delete {
+    padding: 6px 12px;
+    margin-right: 8px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.admin-btn-edit {
+    background: #00d4ff;
+    color: #000;
+}
+
+.admin-btn-edit:hover {
+    background: #00ff88;
+}
+
+.admin-btn-delete {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.admin-btn-delete:hover {
+    background: #ff4444;
+}
+
+/* PAGINACIJA */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.page-link {
+    padding: 8px 12px;
+    background: #1a2d4d;
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.page-link:hover {
+    background: #00d4ff;
+    color: #000;
+}
+
+.page-link.active {
+    background: #00d4ff;
+    color: #000;
+    cursor: default;
+}
+</style>
+
+{% endblock %}

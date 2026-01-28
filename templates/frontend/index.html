@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}
+Resident Evil IX – Requiem
+{% endblock %}
+
+{% block content %}
+
+<!-- INTRO / ENTER SCREEN -->
+<div class="enter-screen" id="enterScreen">
+
+    <!-- PLATFORMS (BOTTOM LEFT) -->
+    <div class="hero-platforms">
+        <a href="https://www.playstation.com" target="_blank" title="PlayStation 5" class="icon-link">
+            <img src="{{ url_for('static', filename='img/platforms/ps5.png') }}" alt="PS5" class="icon-img">
+        </a>
+
+     
+            <a href="https://www.steampowered.com" target="_blank" title="Steam" class="icon-link">
+            <img src="{{ url_for('static', filename='img/platforms/steam.png') }}" alt="Steam" class="icon-img">
+        </a>
+
+        <a href="https://www.xbox.com" target="_blank" title="Xbox Series X|S" class="icon-link">
+            <img src="{{ url_for('static', filename='img/platforms/xbox.png') }}" alt="Xbox" class="icon-img">
+        </a>
+
+        <a href="https://www.nintendo.com" target="_blank" title="Nintendo Switch 2" class="icon-link">
+            <img src="{{ url_for('static', filename='img/platforms/switch.png') }}" alt="Nintendo Switch" class="icon-img">
+        </a>
+    </div>
+
+    <!-- SOCIAL NETWORKS (BOTTOM RIGHT) -->
+    <div class="hero-social">
+        <a href="https://www.youtube.com" target="_blank" title="YouTube" class="icon-link">
+            <img src="{{ url_for('static', filename='img/social/youtube.png') }}" alt="YouTube" class="icon-img">
+        </a>
+
+        <a href="https://www.facebook.com" target="_blank" title="Facebook" class="icon-link">
+            <img src="{{ url_for('static', filename='img/social/facebook.png') }}" alt="Facebook" class="icon-img">
+        </a>
+
+        <a href="https://www.instagram.com" target="_blank" title="Instagram" class="icon-link">
+            <img src="{{ url_for('static', filename='img/social/instagram.png') }}" alt="Instagram" class="icon-img">
+        </a>
+
+        <a href="https://www.tiktok.com" target="_blank" title="TikTok" class="icon-link">
+            <img src="{{ url_for('static', filename='img/social/tiktok.png') }}" alt="TikTok" class="icon-img">
+        </a>
+    </div>
+
+    <!-- CENTER LOGO + TEXT -->
+    <div class="hero-center">
+
+        <!-- LOGO -->
+        <div class="hero-logo">
+            <img
+                id="gameLogoImg"
+                src="{{ url_for('static', filename='img/logo/requiem-logo.png') }}"
+                alt="Resident Evil Requiem Logo"
+                class="logo-img">
+        </div>
+
+        <!-- ENTER BUTTON -->
+        <div class="enter" id="enterBtn">
+            <span>PRITISNI ENTER</span>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<!-- MAIN GAME MENU (HIDDEN) -->
+<div class="main-menu hidden" id="mainMenu">
+    <ul class="menu-list">
+        <li data-link="/hronika">HRONIKA</li>
+        <li data-link="/likovi">KARAKTERI</li>
+        <li data-link="/multimedija">MULTIMEDIJA</li>
+        <li data-link="/novosti">NOVOSTI</li>
+    </ul>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+{% endblock %}

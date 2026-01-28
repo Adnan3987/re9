@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-dashboard-wrapper">
+    <!-- HEADER -->
+    <div class="admin-header">
+        <h1 class="admin-header-title">DASHBOARD</h1>
+        <div class="admin-user-info">
+            <span class="admin-username">Korisnik: <strong>{{ session.get('admin_username', 'Admin') }}</strong></span>
+            <a href="{{ url_for('admin.logout') }}" class="admin-btn-logout">IZLAZ</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="admin-dashboard-container">
+
+        <!-- CARDS GRID -->
+        <div class="admin-cards-grid">
+
+            <!-- CARD: DODAJ NOVU VIJEST -->
+            <div class="admin-card">
+                <div class="admin-card-icon">📝</div>
+                <h2 class="admin-card-title">Dodaj Novu Vijest</h2>
+                <p class="admin-card-desc">Kreiraj i objavi novu vijest u CMS sistem</p>
+                <a href="{{ url_for('admin.news_create') }}" class="admin-card-btn">OTVORI</a>
+            </div>
+
+            <!-- CARD: PREGLED VIJESTI -->
+            <div class="admin-card">
+                <div class="admin-card-icon">📋</div>
+                <h2 class="admin-card-title">Pregled Vijesti</h2>
+                <p class="admin-card-desc">Upravljaj, uredi i briši postojeće vijesti</p>
+                <a href="{{ url_for('admin.news_list') }}" class="admin-card-btn">OTVORI</a>
+            </div>
+
+            <!-- CARD: BACKUP -->
+            <div class="admin-card">
+                <div class="admin-card-icon">💾</div>
+                <h2 class="admin-card-title">Backup</h2>
+                <p class="admin-card-desc">Pravi i upravljaj backup kopijama baze podataka</p>
+                <a href="{{ url_for('admin.backup') }}" class="admin-card-btn">OTVORI</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: auto;
+    overflow: auto;
+}
+
+.admin-dashboard-wrapper {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    color: #e0e0e0;
+    font-family: 'Arial', sans-serif;
+}
+
+/* ========================
+   HEADER
+======================== */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 40px;
+    background: linear-gradient(90deg, #0f1d35 0%, #1a2d4d 100%);
+    border-bottom: 2px solid #00d4ff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.admin-header-title {
+    font-size: 32px;
+    color: #00d4ff;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin-username {
+    color: #b0b0b0;
+    font-size: 14px;
+}
+
+.admin-username strong {
+    color: #00ff88;
+}
+
+.admin-btn-logout {
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #ff6b6b 0%, #ff4444 100%);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.admin-btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 75, 75, 0.3);
+}
+
+/* ========================
+   DASHBOARD CONTAINER
+======================== */
+.admin-dashboard-container {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.admin-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+}
+
+/* ========================
+   CARDS
+======================== */
+.admin-card {
+    background: linear-gradient(135deg, #1a2d4d 0%, #0f1f38 100%);
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    padding: 30px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+}
+
+.admin-card:hover {
+    transform: translateY(-10px);
+    border-color: #00ff88;
+    box-shadow: 0 12px 30px rgba(0, 212, 255, 0.3);
+}
+
+.admin-card-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.admin-card-title {
+    color: #00d4ff;
+    font-size: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.admin-card-desc {
+    color: #a0a0a0;
+    font-size: 13px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.admin-card-btn {
+    padding: 10px 25px;
+    background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+.admin-card-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .admin-dashboard-container {
+        padding: 20px;
+    }
+
+    .admin-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+</style>
+
+{% endblock %}

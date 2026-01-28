@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/multimedija.css') }}">
+{% endblock %}
+
+{% block title %}
+Resident Evil: Requiem - Multimedija
+{% endblock %}
+
+{% block content %}
+
+<div class="multimedija-wrapper">
+
+  <!-- BACK -->
+  <div class="multimedija-back" onclick="goBack()">← NAZAD</div>
+
+  <!-- LEFT MENU -->
+  <aside class="multimedija-menu">
+    <h1>MULTIMEDIJA</h1>
+
+    <ul class="multimedija-list" role="tablist" aria-label="Multimedija kategorije">
+      <li class="multimedija-item active"
+          data-category="prica"
+          role="tab"
+          aria-selected="true"
+          tabindex="0">
+        PRIČA RE: REQUIEM
+      </li>
+
+      <li class="multimedija-item"
+          data-category="wallpaper"
+          role="tab"
+          aria-selected="false"
+          tabindex="0">
+        WALLPAPER
+      </li>
+
+      <li class="multimedija-item"
+          data-category="gameplay"
+          role="tab"
+          aria-selected="false"
+          tabindex="0">
+        KONTROLE / GAMEPLAY
+      </li>
+
+      <li class="multimedija-item"
+          data-category="shop"
+          role="tab"
+          aria-selected="false"
+          tabindex="0">
+        SHOP
+      </li>
+    </ul>
+
+  </aside>
+
+  <!-- RIGHT GALLERY -->
+  <section class="multimedija-gallery" aria-hidden="false">
+    <div id="galleryContent" class="gallery-grid">
+      <!-- Content loaded by JS -->
+    </div>
+  </section>
+
+</div>
+
+<!-- VIDEO LIGHTBOX -->
+<div id="videoLightbox" class="video-lightbox" aria-hidden="true">
+  <button class="video-close" aria-label="Zatvori">×</button>
+  <div class="video-container">
+    <iframe id="lightboxVideo" 
+            title="Video" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- IMAGE LIGHTBOX -->
+<div id="imageLightbox" class="image-lightbox" aria-hidden="true">
+  <button class="image-close" aria-label="Zatvori">×</button>
+  <button class="image-prev" aria-label="Prethodna">‹</button>
+  <div class="image-container">
+    <img id="lightboxImage" alt="">
+    <button id="purchaseButton" class="purchase-button" style="display: none;">NARUČI</button>
+  </div>
+  <button class="image-next" aria-label="Sljedeća">›</button>
+  <div class="image-counter"><span id="imgCurrent">1</span> / <span id="imgTotal">1</span></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/multimedija.js') }}"></script>
+{% endblock %}
